@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="gui\gui.h" />
     <ClInclude Include="gui\imconfig.h" />
+    <ClInclude Include="gui\imfilebrowser.h" />
     <ClInclude Include="gui\imgui.h" />
     <ClInclude Include="gui\imgui_impl_dx9.h" />
     <ClInclude Include="gui\imgui_impl_win32.h" />

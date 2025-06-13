@@ -24,7 +24,7 @@ enum tabChanger
 namespace gui
 {
 	constexpr int WIDTH = 700; 
-	constexpr int HEIGHT = 400; 
+	constexpr int HEIGHT = 500; 
 
 	inline int tab = 0; 
 	inline bool isRunning = true;

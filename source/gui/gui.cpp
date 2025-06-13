@@ -1,6 +1,8 @@
 #include "gui.h"
 #include "../vars.h"
 
+#include "imfilebrowser.h"
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
 	UINT message,
@@ -246,6 +248,8 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
+ImGui::FileBrowser fileDialog;
+
 void gui::Render() noexcept 
 {
 	ImGui::StyleColorsDark();
@@ -279,6 +283,14 @@ void gui::Render() noexcept
 	}
 
 	ImGui::End();
+
+	fileDialog.Display();
+
+	if (fileDialog.HasSelected())
+	{
+		std::cout << "Selected filename" << fileDialog.GetSelected().string() << std::endl;
+		fileDialog.ClearSelected();
+	}
 }
 
 void gui::MainMenu() noexcept
@@ -328,7 +340,12 @@ void gui::NewFileMenu() noexcept
 
 void gui::OpenFileMenu() noexcept
 {
-	ImGui::Text("test");
+
+	fileDialog.SetTitle("title");
+	fileDialog.SetTypeFilters({ ".h", ".cpp" });
+
+	fileDialog.Open();
+
 	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
 	{
 		tab = MAIN_MENU;
