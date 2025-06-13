@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "../vars.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND window,
@@ -84,7 +85,7 @@ void gui::CreateHWindow(const char* windowName) noexcept
 	windowClass.hCursor = 0;
 	windowClass.hbrBackground = 0;
 	windowClass.lpszMenuName = 0;
-	windowClass.lpszClassName = L"classwayzer";
+	windowClass.lpszClassName = "classwayzer";
 	windowClass.hIconSm = 0;
 
 	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -188,8 +189,8 @@ void gui::CreateImGui() noexcept
 
 	io.IniFilename = NULL;
 
-	io.Fonts->AddFontDefault(); // вот шрифты дефолт, можно добавлять свои через функцию 
-	// io.Fonts->AddFontFromFileTTF(...) или AddFontFromMemoryTTF < это с байтов, поищи в инете если интересно
+	io.Fonts->AddFontDefault();
+	io.Fonts->GetGlyphRangesCyrillic();
 
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(device);
@@ -245,21 +246,135 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
-void gui::Render() noexcept // САМАЯ ВАЖНАЯ ФУНКЦИЯ! ТУТ МЫ БУДЕМ РИСОВАТЬ НАШЕ МЕНЮ
+void gui::Render() noexcept 
 {
+	ImGui::StyleColorsDark();
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
-	ImGui::Begin(
-		"ForumWayzer sigma",
-		&isRunning,
-		ImGuiWindowFlags_NoResize |
-		// ImGuiWindowFlags_NoTitleBar |     Для того чтобы убрать тайтл бар, иногда ведь хочется закастомить и быть самым крутым с кастомным тайтл баром
-		ImGuiWindowFlags_NoSavedSettings |
-		// ImGuiWindowFlags_NoCollapse |    Для того чтобы убрать сворачивание(для десктопных внешних приложений очень удобно)
-		ImGuiWindowFlags_NoMove
-	);
+	ImGui::Begin("MFE", &isRunning, ImGuiWindowFlags_NoResize |ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse);
 
-	ImGui::Button("like"); // для примера вот вам кнопочка, почитать о всех виджетах можно так же в [GitHub ImGui](https://github.com/ocornut/imgui)
+	switch (tab)
+	{
+	case MAIN_MENU:
+		MainMenu();
+		break;
+	case NEW_FILE_MENU:
+		NewFileMenu();
+		break;
+	case OPEN_FILE_MENU:
+		OpenFileMenu();
+		break;
+	case SETTINGS_MENU:
+		SettingsMenu();
+		break;
+	case ADDONS_MENU:
+		AddonsMenu();
+		break;
+	case UPDATE_MENU:
+		UpdateMenu();
+		break;
+	case EXIT_MENU:
+		ExitMenu();
+		break;
+	}
 
 	ImGui::End();
 }
+
+void gui::MainMenu() noexcept
+{
+	if (ImGui::Button("New file", ImVec2(120, 40)))
+	{
+		tab = NEW_FILE_MENU;
+	}
+	if (ImGui::Button("Open file", ImVec2(120, 40)))
+	{
+		tab = OPEN_FILE_MENU;
+	}
+	if (ImGui::Button("Settings", ImVec2(120, 40)))
+	{
+		tab = SETTINGS_MENU;
+	}
+	if (ImGui::Button("Addons", ImVec2(120, 40)))
+	{
+		tab = ADDONS_MENU;
+	}
+	if (ImGui::Button("Update", ImVec2(120, 40)))
+	{
+		tab = UPDATE_MENU;
+	}
+
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+	{
+		tab = EXIT_MENU;
+	}
+}
+
+void gui::NewFileMenu() noexcept
+{
+	static char nameFile[64] = { 0 };
+	ImGui::InputText("Write the name of new file", nameFile, 64);
+
+	if (ImGui::Button("Create file", ImVec2(120, 40)))
+	{
+		
+	}
+
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+	{
+		tab = MAIN_MENU;
+	}
+}
+
+void gui::OpenFileMenu() noexcept
+{
+	ImGui::Text("test");
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+	{
+		tab = MAIN_MENU;
+	}
+}
+
+void gui::SettingsMenu() noexcept
+{
+	const char* lang[] = {"English", "Russian"};
+	ImGui::Combo("Change language", &globals::language, lang, ARRAYSIZE(lang));
+
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+	{
+		tab = MAIN_MENU;
+	}
+}
+
+void gui::AddonsMenu() noexcept
+{
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+	{
+		tab = MAIN_MENU;
+	}
+}
+
+void gui::UpdateMenu() noexcept
+{
+	ImGui::Text(globals::version);
+	if (ImGui::IsKeyPressed(ImGuiKey_Escape))
+	{
+		tab = MAIN_MENU;
+	}
+}
+
+void gui::ExitMenu() noexcept
+{
+	ImGui::SetCursorPosX(100);
+	ImGui::Text("Are u sure");
+	if (ImGui::Button("Yes, exit",ImVec2(120, 40)))
+	{
+		gui::isRunning = false;
+	}
+	ImGui::SetCursorPos(ImVec2(140, 44));
+	if (ImGui::Button("No, return", ImVec2(120, 40)))
+	{
+		tab = MAIN_MENU;
+	}
+}
+

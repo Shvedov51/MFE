@@ -7,11 +7,26 @@
 
 #pragma comment(lib, "d3d9.lib")
 
+#include <string>
+#include <iostream>
+
+enum tabChanger
+{
+	MAIN_MENU,
+	NEW_FILE_MENU,
+	OPEN_FILE_MENU,
+	UPDATE_MENU,
+	ADDONS_MENU,
+	SETTINGS_MENU,
+	EXIT_MENU
+};
+
 namespace gui
 {
-	constexpr int WIDTH = 700; // Это ширина вашего будущего окна
-	constexpr int HEIGHT = 400; // Это высота
+	constexpr int WIDTH = 700; 
+	constexpr int HEIGHT = 400; 
 
+	inline int tab = 0; 
 	inline bool isRunning = true;
 
 	inline HWND window = nullptr;
@@ -22,6 +37,14 @@ namespace gui
 
 	inline LPDIRECT3DDEVICE9 device = nullptr;
 	inline D3DPRESENT_PARAMETERS presentParameters = { };
+
+	void MainMenu() noexcept;
+	void NewFileMenu() noexcept;
+	void OpenFileMenu() noexcept;
+	void SettingsMenu() noexcept;
+	void AddonsMenu() noexcept;
+	void UpdateMenu() noexcept;
+	void ExitMenu() noexcept;
 
 	void CreateHWindow(const char* windowName) noexcept;
 	void DestroyHWindow() noexcept;
@@ -37,3 +60,4 @@ namespace gui
 	void EndRender() noexcept;
 	void Render() noexcept;
 }
+
